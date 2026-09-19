@@ -112,6 +112,26 @@ clean → detect duplicates → (human resolves anything escalated) → push →
 as needed). Every step writes to `audit_log`; nothing is pushed to the target system
 while a record still has an open escalation against it.
 
+## Deploying (optional — split client/server deployment)
+
+This is two independent services, not a monolith, so they deploy to two different
+places:
+
+- **Client** (static after `vite build`) → Vercel. Set the project root to `client/`,
+  build command `npm run build`, output directory `dist`. Add an environment variable
+  `VITE_API_BASE_URL` pointing at wherever the server ends up (e.g.
+  `https://darwin-server.onrender.com`, no trailing slash).
+- **Server** (long-running Express + WebSocket process, needs a persistent
+  filesystem for its SQLite file) → Render, Railway, or Fly.io — **not** Vercel:
+  Vercel's serverless functions are stateless/short-lived and can't hold open a
+  WebSocket connection or write to a durable local file. Set the project root to
+  `server/`, build command `npm run build`, start command `npm start`, and add
+  `CLIENT_ORIGIN` set to your Vercel URL so CORS only allows that origin (leave
+  it unset for local dev, where it's permissive by default).
+
+No `GROQ_API_KEY` is required in either environment — the deployed app runs in the
+same fully offline heuristic mode described above.
+
 ## Demo recording
 
 See `docs/demo-recording-notes.md` for what the recording covers (a full run against the

@@ -60,7 +60,15 @@ export interface AgentEvent {
   timestamp: string;
 }
 
-const BASE = "/api";
+// In local dev this is empty, so requests go to "/api" and "/ws" on the
+// same origin — Vite's dev server proxy (see vite.config.ts) forwards those
+// to the local server. In a split deployment (client on Vercel, server on
+// Render/Railway/etc.), set VITE_API_BASE_URL to the server's full origin
+// (e.g. https://darwin-server.onrender.com) at build time so the static
+// client knows where to send requests instead of trying same-origin calls
+// against Vercel itself.
+const API_ORIGIN = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/+$/, "");
+const BASE = `${API_ORIGIN}/api`;
 
 async function req<T>(path: string, opts?: RequestInit): Promise<T> {
   const res = await fetch(`${BASE}${path}`, opts);
@@ -106,8 +114,17 @@ export const api = {
 };
 
 export function connectEvents(onEvent: (evt: AgentEvent) => void): () => void {
-  const proto = window.location.protocol === "https:" ? "wss" : "ws";
-  const ws = new WebSocket(`${proto}://${window.location.host}/ws`);
+  let wsUrl: string;
+  if (API_ORIGIN) {
+    // Split deployment: derive the ws(s):// URL from the configured API
+    // origin rather than the page's own origin (which would be Vercel's
+    // domain, not the server's).
+    wsUrl = `${API_ORIGIN.replace(/^http/, "ws")}/ws`;
+  } else {
+    const proto = window.location.protocol === "https:" ? "wss" : "ws";
+    wsUrl = `${proto}://${window.location.host}/ws`;
+  }
+  const ws = new WebSocket(wsUrl);
   ws.onmessage = (msg) => {
     try {
       onEvent(JSON.parse(msg.data));
