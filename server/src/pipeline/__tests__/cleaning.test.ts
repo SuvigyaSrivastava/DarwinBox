@@ -139,4 +139,17 @@ describe("compareForDuplicate", () => {
     const result = compareForDuplicate(a, b);
     assert.equal(result, null);
   });
+
+  test("exact same name but two different emails flags as a fuzzy possible-duplicate", () => {
+    // This is the counterpart to reconcile.ts's decision to keep an
+    // exact-name-but-conflicting-email pair as two separate records
+    // instead of silently merging on name alone — without this check,
+    // those two records would land here with no path to ever surface as
+    // related, since it's neither a same-email match nor a near-miss name.
+    const a = { first_name: "Aisha", last_name: "Rahman", email: "aisha.rahman@acme.com" };
+    const b = { first_name: "Aisha", last_name: "Rahman", email: "a.rahman@acme.com" };
+    const result = compareForDuplicate(a, b);
+    assert.equal(result?.matchType, "fuzzy");
+    assert.match(result!.reason, /different emails/);
+  });
 });

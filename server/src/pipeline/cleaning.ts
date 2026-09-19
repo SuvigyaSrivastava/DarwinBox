@@ -214,5 +214,21 @@ export function compareForDuplicate(
     }
   }
 
+  // Exact same name, but two different, non-empty emails — reconciliation
+  // deliberately keeps these as separate records rather than guessing
+  // which email is right (see reconcile.ts), so this is the other half of
+  // that decision: surface it as a duplicate candidate rather than
+  // silently leaving two same-named people unlinked. This is a distinct
+  // case from the fuzzy-name check above (identical name, not a
+  // near-miss) and from the same-email check (here the emails differ).
+  if (nameA && nameA === nameB && emailA && emailB && emailA !== emailB) {
+    return {
+      entityKeyA: "",
+      entityKeyB: "",
+      matchType: "fuzzy",
+      reason: `Same name ("${a.first_name} ${a.last_name}") but different emails (${emailA} vs ${emailB}) — could be the same person with a corrected email, or two different people who share a name.`,
+    };
+  }
+
   return null;
 }
