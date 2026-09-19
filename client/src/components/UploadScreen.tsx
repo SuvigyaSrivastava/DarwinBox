@@ -1,5 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "../lib/api";
+
+const COLD_START_DELAY_MS = 4000;
 
 export default function UploadScreen({
   onJobStarted,
@@ -10,32 +12,51 @@ export default function UploadScreen({
 }) {
   const [dragging, setDragging] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [waking, setWaking] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const wakeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  async function startWithFiles(files: FileList) {
+  useEffect(() => {
+    return () => {
+      if (wakeTimer.current) clearTimeout(wakeTimer.current);
+    };
+  }, []);
+
+  function beginLoading() {
     setLoading(true);
     setError(null);
+    setWaking(false);
+    wakeTimer.current = setTimeout(() => setWaking(true), COLD_START_DELAY_MS);
+  }
+
+  function endLoading() {
+    if (wakeTimer.current) clearTimeout(wakeTimer.current);
+    setLoading(false);
+    setWaking(false);
+  }
+
+  async function startWithFiles(files: FileList) {
+    beginLoading();
     try {
       const { jobId } = await api.uploadFiles(files);
       onJobStarted(jobId);
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setLoading(false);
+      endLoading();
     }
   }
 
   async function startWithSample() {
-    setLoading(true);
-    setError(null);
+    beginLoading();
     try {
       const { jobId } = await api.runSample();
       onJobStarted(jobId);
     } catch (e) {
       setError((e as Error).message);
     } finally {
-      setLoading(false);
+      endLoading();
     }
   }
 
@@ -97,6 +118,16 @@ export default function UploadScreen({
             onChange={(e) => e.target.files && startWithFiles(e.target.files)}
           />
         </div>
+
+        {waking && (
+          <div className="wake-banner">
+            <span className="spinner" />
+            <span>
+              Waking up the server — it's on a free hosting tier that sleeps after inactivity, so the first request
+              can take up to a minute. Everything after this will be fast.
+            </span>
+          </div>
+        )}
 
         {error && (
           <div style={{ color: "var(--red)", marginTop: 16, fontSize: 13 }}>
