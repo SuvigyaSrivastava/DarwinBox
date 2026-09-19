@@ -1,0 +1,16 @@
+personnel_number,full_name,work_email,dept_code,pay_grade,worker_type,hire_dt,term_dt,mobile
+E1001,Sarah Chen,sarah.chen@acmecorp.com,ENG,L5,Full-Time,2021-03-15,,+1-512-555-0142
+E1002,Mark Davis,mark.davis@acmecorp.com,ENG,L7,Full-Time,2019-03-01,,+1-512-555-0198
+E1003,Priya Raman,priya.raman@acmecorp.com,ENG,L9,Full-Time,2016-11-02,,+1-512-555-0110
+E1004,James O'Connor,james.oconnor@acmecorp.com,SLS,L4,Full-Time,2022-08-22,,+1-312-555-0177
+E1005,Linda Park,linda.park@acmecorp.com,SLS,L8,Full-Time,2018-06-10,,+1-312-555-0133
+E1006,Tom Nguyen,tom.nguyen@acmecorp.com,MKT,L4,Full-Time,2020-01-20,2024-05-30,+1-000-555-0199
+E1007,Alicia Wu,alicia.wu@acmecorp.com,MKT,L8,Full-Time,2017-05-04,,+1-000-555-0155
+E1008,David Kim,david.kim@acmecorp.com,ENG,L4,Full-Time,2022-09-01,,+1-512-555-0166
+E1009,Fatima Al-Sayed,fatima.alsayed@acmecorp.com,FIN,L4,Full-Time,2023-02-14,,+1-646-555-0121
+E1010,Robert Lee,robert.lee@acmecorp.com,FIN,L9,Full-Time,2015-07-30,,+1-646-555-0100
+E1012,Nina Petrov,nina.petrov@acmecorp.com,ENG,L4,Full-Time,2023-11-06,,+1-512-555-0188
+E1013,Carlos Mendez,carlos.mendez@acmecorp.com,SLS,L4,Full-Time,2022-04-18,,+1-312-555-0144
+E1014,Grace Oyelaran,grace.oyelaran@acmecorp.com,ENG,L4,Full-Time,2023-04-13,,+1-512-555-0177
+E1015,Ben Turner,ben.turner@acmecorp.com,MKT,L5,Full-Time,2021-08-09,,+1-000-555-0122
+E1016,Wei Zhang,wei.zhang@acmecorp.com,ENG,L6,Full-Time,2020-06-01,,+1-512-555-0133

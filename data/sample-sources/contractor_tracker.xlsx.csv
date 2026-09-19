@@ -1,0 +1,6 @@
+Contractor Name,Contact Email,Assigned Team,Engagement Type,Contract Start,Contract End,Supervisor,Notes
+Yuki Tanaka,yuki.tanaka@acmecorp.com,Engineering,Contractor,2023-01-09,2024-01-09,mark.davis@acmecorp.com,Renewed annually
+Omar Haddad,omar.haddad@acmecorp.com,Design,Contractor,2022-10-01,,himane.iyer@acmecorp.com,Month-to-month
+Sarah Chen,sarah.chen@acmecorp.com,Engineering,Full-Time,2021-03-15,,mark.davis@acmecorp.com,Duplicate of core HR record - converted from contractor in 2021
+Jules Bernard,jules.bernard@acmecorp.com,Engineering,Intern,2024-06-01,2024-08-30,mark.davis@acmecorp.com,Summer intern
+Petra Novak,petra.novak@acmecorp.com,Design,Contractor,2023-05-15,,himane.iyer@acmecorp.com,"=HYPERLINK(""http://example.com/invoice"",""Click for invoice"")"

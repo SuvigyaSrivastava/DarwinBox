@@ -1,0 +1,16 @@
+Emp ID,First Name,Last Name,Email Address,Team,Position,Status,Date of Joining,Manager,Office
+E1001,Sarah,Chen,sarah.chen@acmecorp.com,Engineering,Senior Software Engineer,Active,2021-03-15,mark.davis@acmecorp.com,Austin
+E1002,  Mark ,Davis,mark.davis@acmecorp.com,Engineering,Engineering Manager,Active,03/01/2019,priya.raman@acmecorp.com,Austin
+E1003,Priya,Raman,priya.raman@acmecorp.com,Engineering,VP Engineering,Active,2016-11-02,,Austin
+E1004,james,oconnor,james.oconnor@acmecorp.com,Sales,Account Executive,Active,08-22-2022,linda.park@acmecorp.com,Chicago
+E1005,Linda,Park,linda.park@acmecorp.com,Sales,Sales Director,Active,2018/06/10,priya.raman@acmecorp.com,Chicago
+E1006,Tom,Nguyen,tom.nguyen@acmecorp.com,Marketing,Marketing Specialist,Terminated,2020-01-20,alicia.wu@acmecorp.com,Remote
+E1007,Alicia,Wu,alicia.wu@acmecorp.com,Marketing,Head of Marketing,Active,2017-05-04,,Remote
+E1008,David,Kim,david.kim@acmecorp.com,Engineering,QA Engineer,On Leave,2022-09-01,mark.davis@acmecorp.com,Austin
+E1009,Fatima,Al-Sayed,fatima.alsayed@acmecorp.com,Finance,Financial Analyst,Active,2023-02-14,robert.lee@acmecorp.com,New York
+E1010,Robert,Lee,robert.lee@acmecorp.com,Finance,Finance Director,Active,2015-07-30,,New York
+E1099,Sara,Chen,s.chen.eng@acmecorp.com,Engineering,Senior Software Engineer,Active,2021-03-15,mark.davis@acmecorp.com,Austin
+E1012,Nina,Petrov,nina.petrov@acmecorp.com,Engineering,Software Engineer,Active,2023-11-06,mark.davis@acmecorp.com,
+E1013,Carlos,Mendez,,Sales,Account Executive,Active,2022-04-18,linda.park@acmecorp.com,Chicago
+E1014,Grace,,grace.oyelaran@acmecorp.com,Engineering,Software Engineer,Active,13/04/2023,mark.davis@acmecorp.com,Austin
+E1015,Ben,Turner,ben.turner@acmecorp.com,Marketing,Content Strategist,Active,2021-08-09,alicia.wu@acmecorp.com,Remote
