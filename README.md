@@ -6,6 +6,10 @@ reconciling records — stopping to ask a human only when it hits something it g
 can't resolve on its own. Wrapped in a web UI built for a non-technical implementation
 consultant to supervise the run, resolve escalations, and inspect a full audit trail.
 
+**Live demo:** [client-omega-seven-20.vercel.app](https://client-omega-seven-20.vercel.app)
+(server: [darwinbox-9iho.onrender.com](https://darwinbox-9iho.onrender.com), free tier —
+the first request after a period of inactivity may take ~30-50s to wake it up).
+
 ## Tech stack
 
 - **Server**: Node.js + TypeScript, Express, `better-sqlite3` (audit trail + job state),
@@ -115,22 +119,60 @@ while a record still has an open escalation against it.
 ## Deploying (optional — split client/server deployment)
 
 This is two independent services, not a monolith, so they deploy to two different
-places:
+places. This app is deployed live: client on Vercel, server on Render.
 
-- **Client** (static after `vite build`) → Vercel. Set the project root to `client/`,
-  build command `npm run build`, output directory `dist`. Add an environment variable
-  `VITE_API_BASE_URL` pointing at wherever the server ends up (e.g.
-  `https://darwin-server.onrender.com`, no trailing slash).
+- **Client** (static after `vite build`) → Vercel. Project root `client/`, build
+  command `npm run build`, output directory `dist`. Add an environment variable
+  `VITE_API_BASE_URL` pointing at the server's origin (e.g.
+  `https://darwinbox-9iho.onrender.com`, no trailing slash) — `VITE_`-prefixed
+  vars are baked into the client bundle at build time, so this isn't a secret,
+  just config; set it as a plain "Config" value, not "Secret," in Vercel.
 - **Server** (long-running Express + WebSocket process, needs a persistent
   filesystem for its SQLite file) → Render, Railway, or Fly.io — **not** Vercel:
   Vercel's serverless functions are stateless/short-lived and can't hold open a
-  WebSocket connection or write to a durable local file. Set the project root to
-  `server/`, build command `npm run build`, start command `npm start`, and add
-  `CLIENT_ORIGIN` set to your Vercel URL so CORS only allows that origin (leave
-  it unset for local dev, where it's permissive by default).
+  WebSocket connection or write to a durable local file. **Leave Render's Root
+  Directory blank** (repo root), since this is an npm-workspaces monorepo and a
+  scoped root directory breaks the workspace-aware install (see gotcha #1
+  below). Build command `npm install && npm rebuild better-sqlite3 --workspace=server
+  && npm run build --workspace=server`, start command `npm start --workspace=server`.
+  Add `CLIENT_ORIGIN` set to the exact Vercel URL, **no trailing slash** — CORS
+  does an exact string match against the browser's `Origin` header, which never
+  includes a trailing slash, so a mismatched slash silently drops all CORS
+  headers instead of erroring (leave `CLIENT_ORIGIN` unset for local dev, where
+  it's permissive by default).
 
 No `GROQ_API_KEY` is required in either environment — the deployed app runs in the
 same fully offline heuristic mode described above.
+
+### Deploy gotchas hit in practice (and why)
+
+Getting this onto Render surfaced two real bugs that never showed up in local dev,
+both worth documenting because they're exactly the class of "works on my machine"
+issue a forward-deployed engineer has to diagnose blind, from logs alone, against
+someone else's infrastructure:
+
+1. **`schema.sql` missing from the compiled build.** `server/src/db/client.ts`
+   reads `schema.sql` from a path relative to its own module (`__dirname`). In
+   dev, `npm run dev` runs `tsx` directly against `src/`, where the SQL file sits
+   right next to the TypeScript that reads it — no problem. `tsc`, however, only
+   emits compiled `.js`; it doesn't copy non-TypeScript files into `dist/`. So
+   `npm start` (which runs the compiled `dist/index.js`) threw `ENOENT` looking
+   for `dist/db/schema.sql`, which simply never existed. This was invisible
+   until the first time the compiled build actually ran, which was on Render's
+   first deploy. Fixed by adding a copy step to the `build` script.
+2. **`better-sqlite3` native-module ABI mismatch.** `better-sqlite3` ships a
+   prebuilt native `.node` binary compiled against a specific Node ABI version.
+   Render defaulted to the newest available Node (24.x) on the first deploy,
+   which crashed the process on shutdown/cleanup with a native assertion
+   failure — not on startup, which made it look like an intermittent crash-loop
+   rather than an obvious incompatibility. Pinning Node via `.node-version`
+   (20.x, matching this repo's stated requirement) fixed the *runtime* version,
+   but Render's dependency cache had already installed the native module against
+   the old Node version, and a plain `npm install` doesn't detect or fix an ABI
+   mismatch on its own — it only checks declared version ranges, not the
+   compiled binary's actual ABI. The real fix needed an explicit
+   `npm rebuild better-sqlite3`, which forces recompilation against whichever
+   Node is currently active, in the build command.
 
 ## Demo recording
 
