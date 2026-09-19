@@ -136,6 +136,19 @@ export default function ActivityFeed({
               <div className="mono" style={{ marginTop: 4, fontSize: 11 }}>batch {pushResult.batchId}</div>
             </div>
           )}
+
+          {pushResult && (
+            <div className="whats-next">
+              <div className="whats-next-title">What's next</div>
+              {openEscalations > 0 ? (
+                <>Resolve the {openEscalations} open case{openEscalations === 1 ? "" : "s"} in the Review queue, then push again to send them through.</>
+              ) : pushResult.failed > 0 ? (
+                <>{pushResult.failed} record{pushResult.failed === 1 ? "" : "s"} failed on a transient error — click "Retry failed" above, or check the Audit trail for details.</>
+              ) : (
+                <>Everything's through. Check the Audit trail for a full record of what changed and why.</>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="card" style={{ padding: 20 }}>

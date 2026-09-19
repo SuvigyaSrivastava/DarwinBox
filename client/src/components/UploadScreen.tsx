@@ -56,8 +56,8 @@ export default function UploadScreen({
       <div className="hero">
         <h1>Migrate client data without babysitting it</h1>
         <p>
-          Upload your client's raw HR/CRM exports. The agent reconciles multiple files into one dataset, proposes a
-          field mapping, cleans values it can safely fix, and only stops you for the calls it can't confidently make.
+          Add the client's raw HR exports below. From there, the agent takes over — you'll only be asked to weigh in
+          on the handful of cases it genuinely can't decide on its own.
         </p>
 
         <div
@@ -103,6 +103,31 @@ export default function UploadScreen({
             {error}
           </div>
         )}
+
+        <div className="expect-panel">
+          <div className="expect-panel-title">What you'll get</div>
+          <ul className="expect-list">
+            <li>
+              <span className="check">✓</span>
+              One reconciled dataset, even if your files use different column names, date formats, or department
+              codes for the same people.
+            </li>
+            <li>
+              <span className="check">✓</span>
+              Automatic cleanup — dates normalized, duplicates merged, obvious formatting fixed — with nothing
+              guessed on anything that mattered.
+            </li>
+            <li>
+              <span className="check">✓</span>
+              A short review queue with only the calls the agent couldn't confidently make on its own, each with
+              enough context to resolve in one glance.
+            </li>
+            <li>
+              <span className="check">✓</span>
+              A full record of what changed and why, so "why did this happen" is always answerable later.
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );

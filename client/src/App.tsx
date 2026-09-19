@@ -143,7 +143,11 @@ export default function App() {
         />
       )}
       {tab === "escalations" && (
-        <EscalationQueue escalations={openEscalations} onResolved={() => refresh(jobId)} />
+        <EscalationQueue
+          escalations={openEscalations}
+          totalRecords={records.length}
+          onResolved={() => refresh(jobId)}
+        />
       )}
       {tab === "records" && <RecordsTable records={records} jobId={jobId} onChanged={() => refresh(jobId)} />}
       {tab === "audit" && <AuditLog jobId={jobId} />}

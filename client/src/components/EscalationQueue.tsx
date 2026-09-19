@@ -38,6 +38,14 @@ function MappingEscalation({ esc, onResolved }: { esc: Escalation; onResolved: (
         <span className="type-pill mapping">Mapping</span>
       </div>
 
+      <div className="why-you-line">
+        <span className="label">Why this needs you</span>
+        <span>
+          The top {candidates.length > 1 ? "two candidates score close enough" : "candidate isn't confident enough"} that
+          picking automatically risks silently mismapping every row in this column.
+        </span>
+      </div>
+
       <div className="escalation-context">
         <b>Sample values:</b> {sampleValues?.slice(0, 4).join(", ") || "—"}
       </div>
@@ -52,6 +60,14 @@ function MappingEscalation({ esc, onResolved }: { esc: Escalation; onResolved: (
           </div>
         </div>
       ))}
+
+      <div className="why-you-line" style={{ marginTop: 10 }}>
+        <span className="label" style={{ color: "var(--accent)" }}>Recommended</span>
+        <span>
+          "{candidates[0]?.targetField}" scores highest ({Math.round((candidates[0]?.confidence ?? 0) * 100)}%) — use it
+          unless you know this client's data means something more specific.
+        </span>
+      </div>
 
       <div className="escalation-actions" style={{ marginTop: 12 }}>
         <button className="btn btn-approve btn-sm" disabled={busy} onClick={() => act("approve")}>
@@ -107,11 +123,21 @@ function CleaningEscalation({ esc, onResolved }: { esc: Escalation; onResolved: 
         <span className="type-pill cleaning">Cleaning</span>
       </div>
 
+      <div className="why-you-line">
+        <span className="label">Why this needs you</span>
+        <span>A required field has no value and no safe default — a placeholder here would be worse than an honest gap.</span>
+      </div>
+
       <div className="escalation-context">
         <b>Field:</b> <span className="mono">{field}</span> &nbsp;·&nbsp; <b>Raw value:</b>{" "}
         <span className="mono">{rawValue || "(empty)"}</span>
         <br />
         {reason}
+      </div>
+
+      <div className="why-you-line">
+        <span className="label" style={{ color: "var(--accent)" }}>Recommended</span>
+        <span>Check the other source files for this person — if none of them have it either, leaving it blank is the honest answer.</span>
       </div>
 
       <div className="escalation-actions">
@@ -155,6 +181,11 @@ function DuplicateEscalation({ esc, onResolved }: { esc: Escalation; onResolved:
         <span className="type-pill duplicate">Duplicate</span>
       </div>
 
+      <div className="why-you-line">
+        <span className="label">Why this needs you</span>
+        <span>These are close, but not identical — collapsing two different people into one record is a worse mistake than asking once.</span>
+      </div>
+
       <div className="escalation-context">{reason}</div>
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 12 }}>
@@ -172,6 +203,11 @@ function DuplicateEscalation({ esc, onResolved }: { esc: Escalation; onResolved:
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="why-you-line">
+        <span className="label" style={{ color: "var(--accent)" }}>Recommended</span>
+        <span>Same department, title, and type — check email and name for a likely typo before deciding.</span>
       </div>
 
       <div className="escalation-actions">
@@ -193,7 +229,15 @@ function DuplicateEscalation({ esc, onResolved }: { esc: Escalation; onResolved:
   );
 }
 
-export default function EscalationQueue({ escalations, onResolved }: { escalations: Escalation[]; onResolved: () => void }) {
+export default function EscalationQueue({
+  escalations,
+  totalRecords,
+  onResolved,
+}: {
+  escalations: Escalation[];
+  totalRecords?: number;
+  onResolved: () => void;
+}) {
   if (escalations.length === 0) {
     return (
       <div className="card empty-state">
@@ -206,6 +250,19 @@ export default function EscalationQueue({ escalations, onResolved }: { escalatio
 
   return (
     <div>
+      <div className="escalation-queue-summary">
+        <span>
+          <b>{escalations.length}</b> {escalations.length === 1 ? "case" : "cases"} below need a decision only you can
+          make{typeof totalRecords === "number" ? (
+            <>
+              {" "}— everything else across <b>{totalRecords}</b> record{totalRecords === 1 ? "" : "s"} was handled
+              automatically.
+            </>
+          ) : (
+            "."
+          )}
+        </span>
+      </div>
       {escalations.map((esc) => {
         if (esc.type === "mapping") return <MappingEscalation key={esc.id} esc={esc} onResolved={onResolved} />;
         if (esc.type === "cleaning") return <CleaningEscalation key={esc.id} esc={esc} onResolved={onResolved} />;
