@@ -116,6 +116,43 @@ clean → detect duplicates → (human resolves anything escalated) → push →
 as needed). Every step writes to `audit_log`; nothing is pushed to the target system
 while a record still has an open escalation against it.
 
+### Architecture diagram
+
+```mermaid
+flowchart LR
+    User(["Consultant\n(non-technical user)"])
+
+    subgraph Client["Client — React + Vite  ·  Vercel"]
+        UI["Upload screen · Live activity\nReview queue · Records · Audit"]
+    end
+
+    subgraph Server["Server — Express + WebSocket  ·  Render"]
+        API["REST API"]
+        Pipe["Migration pipeline\ningest → sanitize → reconcile\n→ map fields → clean → dedupe"]
+        Push["Push · retry · rollback"]
+    end
+
+    LLM[("Groq / Llama 3.3\n(optional — heuristic\nfallback if no key)")]
+    DB[("SQLite\njobs, records, escalations,\naudit log, learned mappings")]
+    Target[("Mock target\nsystem")]
+
+    User -->|"uploads files,\nresolves escalations"| UI
+    UI <-->|"REST + WebSocket"| API
+    API --> Pipe
+    Pipe -->|"ambiguous column?"| LLM
+    Pipe -->|"auto-resolved or\nescalated"| DB
+    DB -->|"open escalations"| UI
+    API --> Push --> Target
+    Push --> DB
+
+    style Client fill:#eef2ff,stroke:#818cf8
+    style Server fill:#f0fdf4,stroke:#4ade80
+```
+
+The human only enters the loop to resolve what's in the review queue; everything
+else — ingestion, mapping, cleaning, dedup, and the push itself — runs unattended,
+and nothing reaches the target system while a record still has an open escalation.
+
 ## Deploying (optional — split client/server deployment)
 
 This is two independent services, not a monolith, so they deploy to two different
