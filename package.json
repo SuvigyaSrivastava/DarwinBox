@@ -2,6 +2,9 @@
   "name": "darwin-migration-agent",
   "private": true,
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "workspaces": [
     "server",
     "client"
