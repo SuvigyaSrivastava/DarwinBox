@@ -174,11 +174,6 @@ someone else's infrastructure:
    `npm rebuild better-sqlite3`, which forces recompilation against whichever
    Node is currently active, in the build command.
 
-## Demo recording
-
-See `docs/demo-recording-notes.md` for what the recording covers (a full run against the
-sample dataset, then resolving a mapping escalation and a duplicate through the UI).
-
 ## Write-up
 
 See `docs/WRITEUP.md` for the one-page approach summary: how the escalation boundary was
